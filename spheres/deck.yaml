@@ -1,0 +1,54 @@
+# One frame, one arrangement of the spheres per step.
+#
+# Every uniform declared here becomes a tunable. Open the Tuner (key A), drag
+# it, and save with Ctrl+S into views/params.json.
+#
+# The shader reads the weight of each keyframe with duringKeyframe(<name>) and
+# blends the arrangements with them, so the spheres travel between them.
+
+slides:
+  - frame:
+      # the shader traces polyscope's rays, so the usual camera controls work
+      # and views/scene.json holds the framing (press C to overwrite it)
+      - camera: scene
+      - shader: spheres.frag
+        id: scene
+        at: CENTER
+        resolution: [1920, 1080]
+        uniforms:
+          - count:     {type: int,   default: 16,   min: 1,    max: 128}
+          - radius:    {type: float, default: 0.20, min: 0.05, max: 0.60}
+          - spread:    {type: float, default: 0.85, min: 0.20, max: 2.00}
+          # the world is z up, and slope fits the scene in the unit box
+          - floor_z:   {type: float, default: -1.10, min: -3.00, max: 0.00}
+          - wobble:    {type: float, default: 0.26, min: 0.00, max: 0.80}
+          - speed:     {type: float, default: 0.55, min: 0.00, max: 3.00}
+          - shade:     {type: float, default: 0.75, min: 0.00, max: 1.00}
+          - sun:       {type: dir,   default: [0.42, -0.50, 0.76]}
+
+          - c_warm:  {type: color, default: "#e8a24a"}
+          - c_cool:  {type: color, default: "#5b8fd6"}
+          - c_floor: {type: color, default: "#c3bfb2"}
+          - c_sky:   {type: color, default: "#e9eef5"}
+
+      - title: Wobbling spheres!
+        at: TOP
+      - keyframe: cloud
+      - latex: A messy cloud
+        id: note
+        at: [0.5, 0.90]
+
+      - step
+      - keyframe: ring
+      - replace: note
+        with: {latex: A turning ring}
+
+      - step
+      - keyframe: rain
+      - replace: note
+        with: {latex: Gravity}
+
+      - step
+      - keyframe: helix
+      - replace: note
+        with: {latex: An helix}

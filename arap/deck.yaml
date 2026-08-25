@@ -1,0 +1,140 @@
+# Seven frames. Each frame lists what is on screen, and slope keeps the items
+# two consecutive frames have in common, so there are no ids, no `replace:` and
+# no `remove:` here. `same_title` reuses the previous frame's title.
+#
+# main.cpp registers three groups of objects, so a frame can name `bunny`,
+# `bunny_field` or `one_ring` and get all their objects.
+#
+# Label names are prefixed by their frame, so moving a line on one slide leaves
+# the one on the next slide alone. Ctrl+click to select, Ctrl+S to save the
+# position into views/<label>.pos.
+#
+# A camera cuts unless `fly: true` is set, which is why every view change below
+# asks for the flight. The first one cuts.
+#
+# The keyframe names are read elsewhere: snippets.lua uses them for the pull and
+# the sweep count, star.frag for its rotation.
+
+snippets: snippets.lua
+
+slides:
+  - frame:
+      - camera: scene
+      - object: bunny
+      - title: As Rigid As Possible
+        at: TOP
+      - keyframe: rest
+      - latex: Fix the base, then move one vertex.
+        at: rest_say_1
+      - latex: The surface follows, as rigidly as it can.
+        at: rest_say_2
+      - latex: '$\textcolor{pinned}{\bullet}$ the pinned base'
+        at: rest_note_1
+      - latex: '$\textcolor{moved}{\bullet}$ where you send it'
+        at: rest_note_2
+
+  - frame:
+      - camera: pins
+        fly: true
+      - object: bunny
+      - keyframe: pinned
+      - latex: 'The base is pinned: these vertices never move.'
+        at: pin_say_1
+      - latex: Everything above them is solved for.
+        at: pin_say_2
+      - latex: '$\textcolor{pinned}{\bullet}$ 150 of 3000 vertices'
+        at: pin_note_1
+      - latex: the boundary condition
+        at: pin_note_2
+    same_title: true
+
+  # `follow:` reads a placer registered in main.cpp and re-projects it every
+  # frame, so p^0 and p stay on their markers while the ear moves.
+  - frame:
+      - camera: scene
+        fly: true
+      - object: bunny
+      - keyframe: cost
+      - formula: E(p)=\sum_i\;\sum_{j\in\mathcal{N}(i)} w_{ij}\,\bigl\|(p_i-p_j)-R_i\,(p^0_i-p^0_j)\bigr\|^2
+        at: cost_eq
+      - latex: Every one-ring should move by a \emph{rotation}.
+        at: cost_say_1
+      - latex: The $w_{ij}$ are cotangent weights.
+        at: cost_say_2
+      - formula: '\textcolor{rest}{p_i^0}'
+        follow: rest_point
+        offset: [0.035, -0.025]
+      - formula: '\textcolor{moved}{p_i}'
+        follow: target_point
+        offset: [0.032, 0.025]
+    same_title: true
+
+  - frame:
+      - camera: closeup
+        fly: true
+      - object: one_ring
+      - keyframe: local_step
+      - shader: star.frag
+        at: star_shad
+        resolution: [620, 460]
+        uniforms:
+          - turn            # both bound to snippets.lua sections
+          - fit
+      - latex: one ring, in 2D
+        at: local_title
+      - latex: '$\textcolor{rest}{e^0}$ rest \quad $\textcolor{moved}{e}$ now \quad $\textcolor{fitted}{Re^0}$ fitted'
+        at: local_caption
+      - formula: S_i=\sum_j w_{ij}\,e^0_{ij}\,e_{ij}^{\top}=U\Sigma V^{\top}\qquad R_i=VU^{\top}
+        at: local_eq
+      - latex: '\textbf{Local step.} Freeze the positions.'
+        at: local_say_1
+      - latex: Each ring turns by the rotation that fits it best.
+        at: local_say_2
+    same_title: true
+
+  - frame:
+      - camera: scene
+        fly: true
+      - object: bunny_field
+      - keyframe: global_step
+      - formula: \sum_j w_{ij}\,(p_i-p_j)=\sum_j \tfrac{w_{ij}}{2}\,(R_i+R_j)\,(p^0_i-p^0_j)
+        at: glob_eq
+      - latex: '\textbf{Global step.} Freeze the rotations.'
+        at: glob_say_1
+      - latex: One sparse solve --- factored once, reused every frame.
+        at: glob_say_2
+      - latex: one Cholesky, at startup
+        at: glob_note_1
+      - latex: a back-substitution per frame
+        at: glob_note_2
+    same_title: true
+
+  - frame:
+      - object: bunny_field
+      - keyframe: alternate
+      - object: energy_plot
+        at: alt_plot
+      - latex: $E/E_0$, after each sweep
+        at: alt_title
+      - latex: sweeps
+        at: alt_caption
+      - formula: E(p^{(0)})\;\geq\;E(p^{(1)})\;\geq\;E(p^{(2)})\;\geq\;\cdots
+        at: alt_eq
+      - latex: Neither step can raise $E$.
+        at: alt_say_1
+      - latex: So alternating them walks it downhill.
+        at: alt_say_2
+    same_title: true
+
+  - frame:
+      - object: bunny_field
+      - keyframe: live
+      - latex: 'Now grab it: the gizmo is already on the ear.'
+        at: live_say_1
+      - latex: Every sweep is re-solved as you drag.
+        at: live_say_2
+      - latex: '\textbf{arap/handle} --- drag the gizmo'
+        at: live_note_1
+      - latex: '\textbf{arap/sweeps} --- how many, in the corner'
+        at: live_note_2
+    same_title: true
