@@ -12,8 +12,8 @@
 # A camera cuts unless `fly: true` is set, which is why every view change below
 # asks for the flight. The first one cuts.
 #
-# The keyframe names are read elsewhere: snippets.lua uses them for the pull and
-# the sweep count, star.frag for its rotation.
+# The keyframe names are read elsewhere. snippets.lua uses them for the pull and
+# the sweep count, and star.frag for its rotation.
 
 snippets: snippets.lua
 

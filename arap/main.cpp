@@ -43,13 +43,12 @@ vec target(const TimeObject& t)
     return D.P0[D.handle] + (scalar)Snippet::get("pull") * PULL;
 }
 
-// The goal position, marked with p in the deck. The parameter holds it: the
-// mesh updater writes it while the talk runs, the gizmo writes it on the last
-// slide.
+// The goal position, marked with p in the deck. The parameter holds it, written
+// by the mesh updater while the talk runs and by the gizmo on the last slide.
 vec goal() { return (vec)D.grab; }
 
-// How many local+global sweeps to run. Reading it from the snippet means the
-// pace can be changed by saving a file instead of rebuilding.
+// How many sweeps to run. Reading it from the snippet means the pace changes on
+// a save.
 int sweepCount(const TimeObject& t)
 {
     int n = t.afterKeyframe("live") ? (int)D.live_sweeps : (int)Snippet::get("sweeps");
@@ -161,11 +160,9 @@ int main(int argc, char** argv)
                      n(0), n(1), n(2));
     }
 
-    // Both parameters are shown on the last slide without opening the Tuner.
-    // slope shows a parameter on the slides that read it: sweeps is only read
-    // there, so declaring it visible is enough. The handle is read on every
-    // slide, because the marker follows it, so the mesh updater switches its
-    // gizmo on and off.
+    // slope shows a parameter on the slides that read it. sweeps is only read
+    // on the last slide, so declaring it visible is enough. The handle is read
+    // on every slide, so the updater switches its gizmo on and off instead.
     D.grab        = Params::AddVec("arap/handle", D.P0[D.handle] + PULL);
     D.live_sweeps = Params::AddInt("arap/sweeps", 4, 0, MAX_SWEEPS)
                         .show(Params::Visible::Panel);
@@ -180,9 +177,8 @@ int main(int argc, char** argv)
     D.mesh->pc->setEdgeWidth(0.6);
 
     D.mesh->updater = [turn](TimeObject t) {
-        // Before the "live" keyframe the talk owns the goal, so it writes the
-        // parameter and the gizmo stays hidden. On the last slide the gizmo
-        // appears where the talk left the ear.
+        // Before the "live" keyframe the talk owns the goal and the gizmo stays
+        // hidden. After it the gizmo appears where the talk left the ear.
         const bool live = t.afterKeyframe("live");
         Params::setVisible("arap/handle",
                            live ? Params::Visible::Handle : Params::Visible::None);
@@ -243,8 +239,8 @@ int main(int argc, char** argv)
     deck.registerObject("bunny_field", bunny_field);
     deck.registerObject("one_ring", one_ring);
 
-    // the curve is about a dozen floats, so it goes into an array uniform.
-    // slope sets energies_count in the shader along with it.
+    // a dozen floats, so it goes in an array uniform. slope sets energies_count
+    // in the shader alongside it.
     auto plot = Shader::FromFile("energy.frag");
     plot->setResolution(760, 380);
     plot->set("max_sweeps", float(MAX_SWEEPS));
