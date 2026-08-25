@@ -1,0 +1,131 @@
+# Six frames over three fragment shaders. Each .frag draws the picture, this
+# file declares what goes into it, and snippets.lua supplies the two sources the
+# first one needs.
+#
+# All of it is hot-reloaded. Editing a shader, a uniform or a section takes
+# effect on the next frame.
+
+commands: commands.tex
+snippets: snippets.lua
+
+# Each panel is a named group, expanded by writing its name on its own in a
+# frame. A uniform declared with a type becomes a tunable parameter named after
+# the item, so these are fx/freq, sdf2/blend and so on. A bare name is fed by
+# the snippet section already called that.
+
+# `view:` says which part of the plane the shader draws, which is what makes its
+# points addressable from outside, and `id:` names that space for `follow:`.
+wave_panel:
+  - shader: waves.frag
+    id: fx
+    at: panel
+    resolution: [1200, 620]
+    view: {half: 1.0}
+    uniforms:
+      - src_a
+      - src_b
+      - freq:      {type: float, default: 14.0, min: 2.0, max: 40.0}
+      - falloff:   {type: float, default: 2.0,  min: 0.0, max: 8.0}
+      - amplitude: {type: float, default: 1.2,  min: 0.2, max: 3.0}
+      - tint:      {type: color, default: "#fff7ee"}
+
+shape_panel:
+  - shader: shapes.frag
+    id: sdf2
+    at: panel
+    resolution: [1200, 620]
+    view: {half: 0.8}
+    uniforms:
+      - blend: {type: float, default: 0.12, min: 0.0,  max: 0.4}
+      - bands: {type: float, default: 90.0, min: 10.0, max: 200.0}
+      - phase: {type: vec3,  default: [0.0, 0.33, 0.67]}
+
+# No `view:` on this one. It takes its ray from polyscope, so it lives in the 3D
+# scene, the camera item frames it and the mouse orbits it. It is drawn full
+# screen at the window's own resolution.
+solid_panel:
+  - shader: solid.frag
+    id: sdf3
+    at: CENTER
+    resolution: [1920, 1080]
+    uniforms:
+      - blend:  {type: float, default: 0.25, min: 0.0, max: 0.8}
+      - albedo: {type: color, default: "#e2725b"}
+
+slides:
+  - frame:
+      - wave_panel
+      - title: A field in the plane
+        at: TOP
+      - latex: A panel is a single \emph{.frag} file.
+        at: intro_say
+      - step
+      - latex: With no \emph{\#version} line it is handed the usual builtins.
+        at: intro_note
+
+  - frame:
+      - wave_panel
+      - latex: Every uniform declared above is a tunable parameter.
+        at: tune_say
+      - step
+      - latex: Drag them while the show runs, no rebuild and no C++.
+        at: tune_note
+      - latex: '\textcolor{faint}{press A for the Tuner, Ctrl+S to save}'
+        at: tune_hint
+    same_title: true
+
+  - frame:
+      - wave_panel
+      # the shader reads this mark by name and eases the contours in
+      - keyframe: contours
+      - latex: The deck's keyframes reach the shader too.
+        at: kf_say
+      - step
+      - latex: Here they ease the contours in as the slide arrives.
+        at: kf_note
+    same_title: true
+
+  # `follow:` puts a label on a point of the shader's world space. The name is a
+  # snippet section, read in the referential of the item called fx.
+  - frame:
+      - wave_panel
+      - latex: '\textcolor{white}{\textbf{a}}'
+        follow: fx.src_a
+        offset: [0.0, -0.05]
+      - latex: '\textcolor{white}{\textbf{b}}'
+        follow: fx.src_b
+        offset: [0.0, -0.05]
+      - latex: The sources come from \emph{snippets.lua}.
+        at: src_say
+      - step
+      - latex: The same two values feed the uniforms and place these labels.
+        at: src_note
+    same_title: true
+
+  # A new subject, so this frame declares its own title.
+  - frame:
+      - shape_panel
+      - title: A distance field
+        at: TOP
+      - latex: It says how far the nearest surface is, and on which side.
+        at: sdf2_say
+      - step
+      - latex: '\emph{sdf.glsl} has the 2D shapes and the ways to combine them.'
+        at: sdf2_note
+      - latex: '\textcolor{faint}{white is the zero set, the rings are constant distance}'
+        at: sdf2_hint
+
+  # Items are drawn in the order they are listed, so a full screen shader has to
+  # come before the text that sits on it. Listing it after would cover the title.
+  - frame:
+      - camera: scene
+      - solid_panel
+      - title: The same field in 3D
+        at: TOP
+      - latex: Marched along the ray, instead of evaluated once.
+        at: sdf3_say
+      - step
+      - latex: '\emph{raymarch.glsl} traces it, and the ray comes from polyscope.'
+        at: sdf3_note
+      - latex: '\textcolor{faint}{so the usual mouse controls orbit it}'
+        at: sdf3_hint

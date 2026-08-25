@@ -1,0 +1,71 @@
+# Five frames over the three objects main.cpp registers.
+#
+# An object stays on screen as long as consecutive frames keep asking for it.
+# `sheet` is on all five, so it goes in the template instead of being repeated.
+#
+# This file and snippets.lua are hot-reloaded. Editing main.cpp needs a
+# rebuild.
+
+commands: commands.tex
+snippets: snippets.lua
+
+# added to the first step of every frame, and built once, so the sheet holds
+# still across a slide change instead of fading out and back in
+template:
+  - object: sheet
+
+slides:
+  - frame:
+      # loads views/scene.json, press C to overwrite it
+      - camera: scene
+      - title: A mesh from C++
+        at: TOP
+      - latex: The grid is built in \emph{main.cpp} and registered by name.
+        at: mesh_say
+      - step
+      - latex: Its updater runs on every frame it is on screen.
+        at: mesh_note
+
+  # A new subject, so a new title. `height` is a wrapped polyscope quantity, so
+  # it can arrive a slide after the mesh it belongs to.
+  - frame:
+      - object: height
+      - title: Two ways to show a field
+        at: TOP
+      - latex: Any polyscope quantity can be wrapped into a primitive.
+        at: field_say
+      - step
+      - latex: That works for every quantity, and it appears as it is.
+        at: field_note
+
+  # `envelope` is a MeshScalarField. Dropping `height` is what takes it off the
+  # slide, so the two are seen one after the other.
+  - frame:
+      - object: envelope
+      - latex: For a vertex scalar on a mesh there is a dedicated primitive.
+        at: pretty_say
+      - step
+      - latex: It fades the surface into the colour map, then grows the field.
+        at: pretty_note
+    same_title: true
+
+  - frame:
+      - object: height
+      - title: Tuning it live
+        at: TOP
+      - latex: The wave itself is a section of \emph{snippets.lua}.
+        at: tune_say
+      - step
+      - latex: Save the file and the next frame uses the new shape.
+        at: tune_note
+      - latex: '\textcolor{faint}{\emph{ripple/amplitude} from C++, \emph{ripple/speed} from Lua, both in the Tuner}'
+        at: tune_hint
+
+  - frame:
+      - object: height
+      - latex: Only the grid, the loop and the upload cost a rebuild.
+        at: closing_say
+      - step
+      - latex: '\textcolor{accent}{The \emph{orbit} example puts the geometry in Lua too.}'
+        at: closing_note
+    same_title: true

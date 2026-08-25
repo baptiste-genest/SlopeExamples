@@ -1,0 +1,102 @@
+# Four frames, and no C++ behind them. Saving this file recomposes the slides on
+# the next frame.
+#
+# Most items are placed with `at: <label>`, saved in views/<label>.pos.
+# Ctrl+click to select, drag, Ctrl+S to write. The positions here are a start.
+#
+# A `formula:` item is compiled in math mode.
+
+commands: commands.tex
+
+# added to the first step of every frame, and built once, so it stays put across
+# a slide change. A frame opts out with `no_template: true`.
+template:
+  - latex: '\textcolor{faint}{slope}'
+    at: footer
+
+slides:
+  - frame:
+      # `scale:` sizes the picture. An image is named after its filename stem.
+      - image: slope_icon.png
+        at: logo
+        scale: 0.6
+      # a title is named by a slug of its text, so `id:` gives it a short one
+      - title: Slides, without code
+        id: deck_title
+        at: CENTER
+      # everything after a `- step` waits for the next click
+      - step
+      - latex: Everything on these slides is a line of \emph{deck.yaml}.
+        at: opening
+
+  # `same_title: true` keeps the previous frame's title. `set:` re-places it, and
+  # the slide transition animates the move.
+  - frame:
+      - set: deck_title
+        at: TOP
+      - latex: A frame is a list of items.
+        at: intro_say
+      - step
+      - latex: Items after a \emph{step} marker wait for the next click.
+        at: intro_step
+      - step
+      # an inline item has no name of its own, so `id:` is what lets the next
+      # item refer to it. `at:` only says where it sits.
+      - formula: e^{i\pi}+1=0
+        at: intro_eq
+        id: intro_eq
+      # `below:` places an item against another one and follows it if it moves
+      - latex: '\textcolor{faint}{a \emph{formula} item}'
+        below: intro_eq
+        padding: 0.03
+    same_title: true
+
+  # A new subject, so a new title. Titles label the groups you can jump between.
+  #
+  # A `box:` has no position of its own. It frames the items it holds and
+  # follows them. An `arrow:` resolves its endpoints every frame.
+  - frame:
+      - title: Boxes and arrows
+        at: TOP
+      - box:
+          - latex: '\textbf{Theorem.}'
+            at: th_head
+            id: th_head
+          - step
+          - formula: \sum_{n\geq 1}\frac{1}{n^2}=\frac{\pi^2}{6}
+            below: th_head
+            padding: 0.03
+        id: th_box
+        padx: 0.04
+        pady: 0.025
+        filled: true
+      - step
+      - latex: '\textcolor{accent}{Euler got there first.}'
+        at: th_remark
+        id: th_remark
+      - arrow:
+          from: th_box
+          to: th_remark
+          bend: 0.25
+
+  # A `stack:` lays its children out one below another. The layout reserves the
+  # space of children on later steps, so the ones already up do not shift.
+  - frame:
+      - title: Stacks and state
+        at: TOP
+      - stack:
+          - latex: The deck is hot-reloaded.
+          - step
+          - latex: So are the preamble and the labels.
+          - step
+          - latex: A rebuild is only needed for C++.
+        at: stack_col
+        id: stack_col
+        spacing: 0.03
+        align: left
+      - step
+      # alpha, rot and zoom live in the slide state, so `set:` animates them
+      - set: stack_col
+        alpha: 0.35
+      - latex: '\textcolor{accent}{See the \emph{ripple} example for the C++ side.}'
+        at: closing

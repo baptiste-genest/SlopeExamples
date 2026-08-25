@@ -1,0 +1,80 @@
+# Two frames, and no C++ behind them. The geometry lives in snippets.lua and is
+# named here by section. `surface:` samples a vec2 -> vec3 callable, `curve:` a
+# scalar -> vec3 one, and `point:` rides a section returning three numbers.
+#
+# A `- step` brings in what follows it on the next click, scene objects as well
+# as text. One frame covers the clicks that build one scene.
+#
+# Both files are hot-reloaded.
+#
+# There is no `camera:` item, so polyscope frames the scene itself. Press C to
+# save a view as views/scene.json and add `- camera: scene` to use it.
+
+commands: commands.tex
+snippets: snippets.lua
+
+# Any top level list beside the slides is a named group, expanded wherever its
+# name appears on its own in a frame. It is built once and the same primitives
+# are re-added afterwards. A group cannot contain a `- step`.
+
+# `closed: true` joins the last node back to the first
+orbit_ring:
+  - curve: ring
+    closed: true
+
+# A group can hold several items, so the moon and its label travel together.
+# `follow:` places an item on a moving value, shifted by `offset:`, instead of at
+# a label.
+the_moon:
+  - point: moon
+    radius: 0.07
+  - latex: the moon
+    follow: moon
+    offset: [0.06, -0.06]
+
+# added to the first step of every frame, and built once, so the planet holds
+# still across a slide change. `closed: [true, false]` welds the u seam.
+template:
+  - surface: planet
+    closed: [true, false]
+
+slides:
+  - frame:
+      - title: A scene from Lua
+        at: TOP
+      - latex: This sphere is six lines of \emph{snippets.lua}.
+        at: planet_say
+        id: planet_say
+      - step
+      # A step leaves the earlier items up, so a spent line is taken off with
+      # `remove:`. An inline item needs an `id:` before anything can name it.
+      - remove: planet_say
+      - orbit_ring
+      - latex: The orbit is another section, sampled over a segment.
+        at: ring_say
+        id: ring_say
+      - latex: Both read \emph{R}, so one slider moves them together.
+        at: ring_note
+        id: ring_note
+      - latex: '\textcolor{faint}{press A for the Tuner}'
+        at: ring_tuner
+        id: ring_tuner
+      - step
+      - remove: [ring_say, ring_note, ring_tuner]
+      - the_moon
+      - latex: The label is projected from the same section the point rides.
+        at: moon_say
+
+  # A new subject, so a new title. Titles label the groups you can jump between.
+  - frame:
+      - orbit_ring
+      - the_moon
+      - title: Following the deck
+        at: TOP
+      # the `tilt` section weighs this mark
+      - keyframe: tilted
+      - latex: The snippet asks for this frame by name.
+        at: tilt_say
+      - step
+      - latex: Reordering the deck moves the tilt along with it.
+        at: tilt_note
