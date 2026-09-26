@@ -38,10 +38,8 @@ slides:
         fly: true
       - object: bunny
       - keyframe: pinned
-      - latex: 'The base is pinned: these vertices never move.'
+      - latex: 'The pinned vertices never move.'
         at: pin_say_1
-      - latex: Everything above them is solved for.
-        at: pin_say_2
       - latex: '$\textcolor{pinned}{\bullet}$ 150 of 3000 vertices'
         at: pin_note_1
       - latex: the boundary condition
@@ -101,7 +99,7 @@ slides:
         at: glob_eq
       - latex: '\textbf{Global step.} Freeze the rotations.'
         at: glob_say_1
-      - latex: One sparse solve --- factored once, reused every frame.
+      - latex: The operator is factored once.
         at: glob_say_2
       - latex: one Cholesky, at startup
         at: glob_note_1
@@ -122,19 +120,19 @@ slides:
         at: alt_eq
       - latex: Neither step can raise $E$.
         at: alt_say_1
-      - latex: So alternating them walks it downhill.
+      - latex: So alternating them reduces the energy.
         at: alt_say_2
     same_title: true
 
   - frame:
       - object: bunny_field
       - keyframe: live
-      - latex: 'Now grab it: the gizmo is already on the ear.'
+      - latex: 'Grab it! the gizmo is already on the ear.'
         at: live_say_1
       - latex: Every sweep is re-solved as you drag.
         at: live_say_2
-      - latex: '\textbf{arap/handle} --- drag the gizmo'
+      - latex: '\textbf{arap/handle} to drag the gizmo'
         at: live_note_1
-      - latex: '\textbf{arap/sweeps} --- how many, in the corner'
+      - latex: '\textbf{arap/sweeps} tweak the iterations'
         at: live_note_2
     same_title: true
