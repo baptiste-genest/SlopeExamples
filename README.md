@@ -24,7 +24,8 @@ Slope needs `pdflatex`, ImageMagick's `convert` and, for video, `ffmpeg`. On
 Debian or Ubuntu:
 
 ```
-sudo apt install texlive-latex-extra imagemagick ffmpeg
+sudo apt-get update
+sudo apt-get install -y build-essential cmake git xorg-dev libglu1-mesa-dev libgl1-mesa-dev libegl-dev libgl1-mesa-dri imagemagick texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended ffmpeg
 ```
 
 ImageMagick must be allowed to convert pdf to png. See
